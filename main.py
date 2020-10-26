@@ -7,7 +7,7 @@
 改变BPM前面四极铁前面的矫正子电流大小，并观察BPM中位置信息如何改变
 '''
 import sys
-from PyQt5.Qt import QApplication,QWidget, QVBoxLayout, QTimer
+from PyQt5.Qt import QApplication,QWidget, QVBoxLayout, QTimer, QMessageBox, QFileDialog
 import matplotlib
 matplotlib.use('Qt5Agg')
 from matplotlib.backends.backend_qt5agg import FigureCanvasQTAgg as FigureCanvas
@@ -15,6 +15,7 @@ import matplotlib.pyplot as plt
 import numpy as np
 from epics import caget, caput
 import mainwindow
+import SinCurrent
 
 class BeamMonitor(QWidget):
     def __init__(self):
@@ -23,7 +24,23 @@ class BeamMonitor(QWidget):
         self.timer.timeout.connect(self.getDatafromEPICS)
         self.InitUI()
 
+
     def InitUI(self):
+        global QMCurrentAmplitude, QMCycle, QMInterval,QMChannelName
+
+        self.BPMChannelName = "xuliang"
+        self.DMChannelName = "xuliang"
+        QMChannelName = "xuliang"
+        QMCurrentAmplitude = 0
+        QMCycle = 1
+        QMInterval = 0
+        self.DMCurrent = 0
+        self.FilePath = ["",""]
+        self.sinCurrentRun = False
+        self.BPMChannelRight = False
+        self.QMChannelRight = False
+        self.DMChannelRight = False
+
 
         self.ui = mainwindow.Ui_Form()
         self.ui.setupUi(self)
@@ -31,8 +48,17 @@ class BeamMonitor(QWidget):
         self.ui.FilePath.setReadOnly(True)
 
         self.ui.isSaveCheckBox.stateChanged.connect(self.on_isSaveCheckBox_slot)
-        self.ui.ChannelTestBtn.clicked.connect(self.ChannelTest_slot)
         self.ui.BPMChannel.textChanged.connect(self.getChannelName)
+        self.ui.QMChannel.textChanged.connect(self.getChannelName)
+        self.ui.DMChannel.textChanged.connect(self.getChannelName)
+        self.ui.StartBtn.clicked.connect(self.on_StartBtn_slot)
+        self.ui.QMPutBtn.clicked.connect(self.QMCurrent_set)
+        self.ui.DMPutBtn.clicked.connect(self.DMCurrent_set)
+        self.ui.FilePathBtn.clicked.connect(self.getFilePath)
+        self.ui.QM_A.valueChanged.connect(self.getValue)
+        self.ui.QM_C.valueChanged.connect(self.getValue)
+        self.ui.QM_I.valueChanged.connect(self.getValue)
+        self.ui.DM_C.valueChanged.connect(self.getValue)
 
         self.XLine = XOnBPM()
         self.VLayout = QVBoxLayout()
@@ -42,8 +68,12 @@ class BeamMonitor(QWidget):
         self.t = 0
 
     def on_StartBtn_slot(self):
-        # 0.5秒读取一次数据
-        # self.timer.start(500)
+        #每0.5秒读取一次数据
+        self.timer.start(500)
+
+    def on_StopBtn_slot(self):
+        self.timer.stop()
+        self.t = 0
 
     def on_isSaveCheckBox_slot(self):
         '''
@@ -52,44 +82,123 @@ class BeamMonitor(QWidget):
         '''
         if self.ui.isSaveCheckBox.isChecked():
             self.ui.SetSaveInfo.show()
+            if self.FilePath[0] == "":
+                self.ui.StartBtn.setEnabled(False)
         else:
             self.ui.SetSaveInfo.hide()
+            self.ui.StartBtn.setEnabled(True)
 
     def getDatafromEPICS(self):
         '''
         从EPICS系统中读取数据
         :return:
         '''
-        if len(self.XLine.x) < 80:
-            self.XLine.x.append(caget(self.ChannelName))
-            self.XLine.time.append(self.t * 0.5)
-        else:
-            del self.XLine.x[0]
-            del self.XLine.time[0]
-            self.XLine.x.append(caget(self.ChannelName))
-            self.XLine.time.append(self.t * 0.5)
+        if not self.BPMChannelRight:
+            if not caget(self.BPMChannelName, timeout = 1):
+                QMessageBox.information(self, "提示", "无法连接到通道，请检查是否有误!")
+                self.timer.stop()
+                self.t = 0
+            else:
+                self.BPMChannelRight = True
+        if self.BPMChannelRight:
+            if len(self.XLine.TimeAndX.shape[0]) < 80:
+                np.vstack((self.XLine.TimeAndX.shape,[self.t * 0.5,caget(self.BPMChannelName)]))
+            else:
+                self.XLine.TimeAndX = np.delete(self.XLine.TimeAndX, 0, axis = 0)
+                np.vstack((self.XLine.TimeAndX.shape,[self.t * 0.5,caget(self.BPMChannelName)]))
 
-        self.t += 1
+            self.XLine.update_figure()
 
-    def ChannelTest_slot(self):
+            if len(self.XLine.TimeAndX.shape[0]) % 80 == 0:
+                if self.ui.isSaveCheckBox.isChecked():
+                    with open(self.FilePath[0], 'ab') as f:
+                        np.savetxt(f, self.XLine.TimeAndX)
+
+            self.t += 1
+
+    def ChannelTest_slot(self,channelName):
         '''
         检测通道名是否有效
+        目前作废函数
         :return:
         '''
-        try:
-            self.ChannelName #尝试是否输入了通道名
-            caget(self.ChannelName) # 尝试是否可以连接到通道并读取数据
-        except Exception as e:
-            print(e)
+        if not caget(channelName,timeout=1): # 尝试是否可以连接到通道并读取数据
+            QMessageBox.information(self,"提示", "无法连接到通道，请检查是否有误")
 
     def getChannelName(self):
         '''
         获取用户设置的通道名
         :return:
         '''
-        self.ChannelName =  self.ui.BPMChannel.text()
+        lineEdit = self.sender()
+        if lineEdit.objectName() == "BPMChannel":
+            self.BPMChannelName =  self.ui.BPMChannel.text()
+            self.BPMChannelRight = False
+        elif lineEdit.objectName() == "QMChannel":
+            QMChannelName = self.ui.QMChannel.text()
+            self.QMChannelRight = False
+        elif lineEdit.objectName() == "DMChannel":
+            self.DMChannelName = self.ui.DMChannel.text()
+            self.DMChannelRight = False
 
+    def QMCurrent_set(self):
+        global QMInterval,QMCycle,QMChannelName,QMCurrentAmplitude
 
+        if not self.QMChannelRight:
+            if not caget(QMChannelName,timeout=2): # 尝试是否可以连接到通道并读取数据
+                QMessageBox.information(self,"提示", "无法连接到通道，请检查是否有误!")
+            else:
+                self.QMChannelRight = True
+
+        if self.QMChannelRight:
+            if QMInterval == 0:
+                caput(QMChannelName,QMCurrentAmplitude)
+            else:
+                # 为四极铁添加周期性电流（创建子线程文件）
+                if self.sinCurrentRun:
+                    self.ui.QMPutBtn.setText("Put")
+                    self.sinCurrentRun = not self.sinCurrentRun
+                    # 线程停止并销毁
+                    self.QMCurrent.terminate()
+                    del self.QMCurrent
+                else:
+                    self.ui.QMPutBtn.setText("Stop")
+                    self.sinCurrentRun = not self.sinCurrentRun
+                    #创建线程并开启
+                    self.QMCurrent = SinCurrent.CurrentThread(QMChannelName, QMCycle, QMInterval,QMCurrentAmplitude)
+                    self.QMCurrent.start()
+
+    def DMCurrent_set(self):
+        if not self.DMChannelRight:
+            if not caget(self.DMChannelName, timeout=2):  # 尝试是否可以连接到通道并读取数据
+                QMessageBox.information(self, "提示", "无法连接到通道，请检查是否有误!")
+            else:
+                self.DMChannelRight = True
+
+        if self.DMChannelRight:
+            caput(self.DMChannelName, self.DMCurrent)
+
+    def getFilePath(self):
+        self.FilePath = QFileDialog.getSaveFileName(filter ="Text Files (*.txt)")
+        self.ui.FilePath.setText(self.FilePath[0])
+        if self.FilePath[0] == "":
+            self.ui.StartBtn.setEnabled(False)
+        else:
+            self.ui.StartBtn.setEnabled(True)
+
+    def getValue(self):
+        global QMCurrentAmplitude, QMCycle, QMInterval
+        SpinBox = self.sender()
+        if SpinBox.objectName() == "QM_A":
+            QMCurrentAmplitude = SpinBox.value()
+        elif SpinBox.objectName() == "QM_C":
+            QMCycle = SpinBox.value()
+        elif SpinBox.objectName() == "QM_I":
+            QMInterval = SpinBox.value()
+        elif SpinBox.objectName() == "DM_C":
+            self.DMCurrent = SpinBox.value()
+
+        print(QMCurrentAmplitude)
 
 
 class XOnBPM(FigureCanvas):
@@ -109,8 +218,7 @@ class XOnBPM(FigureCanvas):
         self.ax.tick_params(labelsize=7)
         plt.legend([xLine], ["X"], loc=2, fontsize=6)
 
-        self.x = []
-        self.time = []
+        self.TimeAndX = np.array([0,2])
 
     def update_figure(self):
         # self.x = [random.randint(0, 10) for i in range(4)]
@@ -121,15 +229,10 @@ class XOnBPM(FigureCanvas):
         #将x轴坐标刻度设置为文字
         self.ax.set_ylabel("x/y")
         self.ax.grid()
-        xLine, = self.ax.plot(self.time,self.x,'r', marker = "o", markersize = 4)
+        xLine, = self.ax.plot(self.TimeAndX[:,0],self.TimeAndX[:,1],'r', marker = "o", markersize = 4)
         #添加图例显示
         self.ax.legend([xLine],["X"], loc = 2, fontsize = 6)
         self.draw()
-
-
-
-
-
 
 
 
@@ -140,5 +243,6 @@ if  __name__ == "__main__":
 
     w = BeamMonitor()
     w.show()
+    w.setWindowTitle("Beam Monitor")
 
     sys.exit(app.exec_())
