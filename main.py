@@ -63,6 +63,7 @@ class BeamMonitor(QWidget):
         self.ui.QMChannel.textChanged.connect(self.getChannelName)
         self.ui.DMChannel.textChanged.connect(self.getChannelName)
         self.ui.StartBtn.clicked.connect(self.on_StartBtn_slot)
+        self.ui.StopBtn.clicked.connect(self.on_StopBtn_slot)
         self.ui.QMPutBtn.clicked.connect(self.QMCurrent_set)
         self.ui.DMPutBtn.clicked.connect(self.DMCurrent_set)
         self.ui.FilePathBtn.clicked.connect(self.getFilePath)
@@ -86,6 +87,7 @@ class BeamMonitor(QWidget):
     def on_StopBtn_slot(self):
         self.timer.stop()
         self.t = 0
+        self.XLine.TimeAndX = np.empty((0,2))
 
     def on_isSaveCheckBox_slot(self):
         '''
@@ -115,18 +117,19 @@ class BeamMonitor(QWidget):
                 self.BPMChannelRight = True
         if self.BPMChannelRight:
             current = caget(self.BPMChannelName)
-            if len(self.XLine.TimeAndX.shape[0]) < 80:
 
-                np.vstack((self.XLine.TimeAndX,[self.t * 0.5,current]))
+            if self.XLine.TimeAndX.shape[0] < 80:
+
+                self.XLine.TimeAndX = np.vstack((self.XLine.TimeAndX,[self.t * 0.5,current]))
                 if self.ui.isSaveCheckBox.isChecked():
                     with open(self.FilePath[0], 'ab') as f:
-                        np.savetxt(f, [self.t * 0.5, current])
+                        np.savetxt(f, np.array([[self.t * 0.5, current]]))
             else:
                 self.XLine.TimeAndX = np.delete(self.XLine.TimeAndX, 0, axis = 0)
-                np.vstack((self.XLine.TimeAndX,[self.t * 0.5,current]))
+                self.XLine.TimeAndX = np.vstack((self.XLine.TimeAndX,[self.t * 0.5,current]))
                 if self.ui.isSaveCheckBox.isChecked():
                     with open(self.FilePath[0], 'ab') as f:
-                        np.savetxt(f, [self.t * 0.5, current])
+                        np.savetxt(f, np.array([[self.t * 0.5, current]]))
 
             if (self.t + 1) % (QMCycle * 2) == 0:
                 if len(self.error) < 2:
@@ -134,13 +137,17 @@ class BeamMonitor(QWidget):
                                   min(self.XLine.TimeAndX[(self.t + 1 - QMCycle * 2):self.t + 1,1]))
                 else:
                     del self.error[0]
-                    self.error.append(max(self.XLine.TimeAndX[(self.t + 1 - QMCycle * 2):self.t + 1, 1]) -
-                                  min(self.XLine.TimeAndX[(self.t + 1 - QMCycle * 2):self.t + 1, 1]))
+                    if self.t < 80:
+                        self.error.append(max(self.XLine.TimeAndX[(self.t + 1 - QMCycle * 2):self.t + 1, 1]) -
+                                      min(self.XLine.TimeAndX[(self.t + 1 - QMCycle * 2):self.t + 1, 1]))
+                    else:
+                        self.error.append(max(self.XLine.TimeAndX[(80 - QMCycle * 2):80, 1]) -
+                                      min(self.XLine.TimeAndX[(80 - QMCycle * 2):80, 1]))
 
                 self.ui.errorDisplay.setText(str(self.error))
                 self.AmplitudeSender.emit(self.error)
 
-
+            print(self.XLine.TimeAndX)
             self.XLine.update_figure()
 
             self.t += 1
@@ -270,7 +277,7 @@ class XOnBPM(FigureCanvas):
         self.ax.tick_params(labelsize=7)
         plt.legend([xLine], ["X"], loc=2, fontsize=6)
 
-        self.TimeAndX = np.array([0,2])
+        self.TimeAndX = np.empty((0,2))
 
     def update_figure(self):
         # self.x = [random.randint(0, 10) for i in range(4)]
