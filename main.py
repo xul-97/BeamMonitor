@@ -7,7 +7,7 @@
 改变BPM前面四极铁前面的矫正子电流大小，并观察BPM中位置信息如何改变
 '''
 import sys
-from PyQt5.Qt import QApplication,QWidget, QVBoxLayout, QTimer, QMessageBox, QFileDialog
+from PyQt5.Qt import QApplication,QWidget, QVBoxLayout, QTimer, QMessageBox, QFileDialog, pyqtSlot, pyqtSignal
 import matplotlib
 matplotlib.use('Qt5Agg')
 from matplotlib.backends.backend_qt5agg import FigureCanvasQTAgg as FigureCanvas
@@ -16,27 +16,38 @@ import numpy as np
 from epics import caget, caput
 import mainwindow
 import SinCurrent
+import DMCurrent
 
 class BeamMonitor(QWidget):
+
+    AmplitudeSender = pyqtSignal(list)
+    QMSetParameters = pyqtSignal(str,float,float,float)
+
     def __init__(self):
         super(BeamMonitor, self).__init__()
         self.timer =  QTimer(self)
         self.timer.timeout.connect(self.getDatafromEPICS)
         self.InitUI()
 
+        self.QMCurrent = SinCurrent.CurrentThread()
+        self.QMSetParameters.connect(self.QMCurrent.receiveParameters)
+
 
     def InitUI(self):
-        global QMCurrentAmplitude, QMCycle, QMInterval,QMChannelName
+        global QMCurrentAmplitude, QMCycle, QMInterval,QMChannelName,DMCurrentAmplitude,DMInterval,DMChannelName
 
         self.BPMChannelName = "xuliang"
-        self.DMChannelName = "xuliang"
+        DMChannelName = "xuliang"
         QMChannelName = "xuliang"
         QMCurrentAmplitude = 0
         QMCycle = 1
         QMInterval = 0
-        self.DMCurrent = 0
+        DMCurrentAmplitude = 0
+        DMInterval = 0
         self.FilePath = ["",""]
+        self.error = []
         self.sinCurrentRun = False
+        self.DMCurrentRun = False
         self.BPMChannelRight = False
         self.QMChannelRight = False
         self.DMChannelRight = False
@@ -59,6 +70,7 @@ class BeamMonitor(QWidget):
         self.ui.QM_C.valueChanged.connect(self.getValue)
         self.ui.QM_I.valueChanged.connect(self.getValue)
         self.ui.DM_C.valueChanged.connect(self.getValue)
+        self.ui.DM_I.valueChanged.connect(self.getValue)
 
         self.XLine = XOnBPM()
         self.VLayout = QVBoxLayout()
@@ -68,7 +80,7 @@ class BeamMonitor(QWidget):
         self.t = 0
 
     def on_StartBtn_slot(self):
-        #每0.5秒读取一次数据
+        #每0.5秒读取一次BPM的数据
         self.timer.start(500)
 
     def on_StopBtn_slot(self):
@@ -93,6 +105,7 @@ class BeamMonitor(QWidget):
         从EPICS系统中读取数据
         :return:
         '''
+        global QMCycle
         if not self.BPMChannelRight:
             if not caget(self.BPMChannelName, timeout = 1):
                 QMessageBox.information(self, "提示", "无法连接到通道，请检查是否有误!")
@@ -101,18 +114,34 @@ class BeamMonitor(QWidget):
             else:
                 self.BPMChannelRight = True
         if self.BPMChannelRight:
+            current = caget(self.BPMChannelName)
             if len(self.XLine.TimeAndX.shape[0]) < 80:
-                np.vstack((self.XLine.TimeAndX.shape,[self.t * 0.5,caget(self.BPMChannelName)]))
-            else:
-                self.XLine.TimeAndX = np.delete(self.XLine.TimeAndX, 0, axis = 0)
-                np.vstack((self.XLine.TimeAndX.shape,[self.t * 0.5,caget(self.BPMChannelName)]))
 
-            self.XLine.update_figure()
-
-            if len(self.XLine.TimeAndX.shape[0]) % 80 == 0:
+                np.vstack((self.XLine.TimeAndX,[self.t * 0.5,current]))
                 if self.ui.isSaveCheckBox.isChecked():
                     with open(self.FilePath[0], 'ab') as f:
-                        np.savetxt(f, self.XLine.TimeAndX)
+                        np.savetxt(f, [self.t * 0.5, current])
+            else:
+                self.XLine.TimeAndX = np.delete(self.XLine.TimeAndX, 0, axis = 0)
+                np.vstack((self.XLine.TimeAndX,[self.t * 0.5,current]))
+                if self.ui.isSaveCheckBox.isChecked():
+                    with open(self.FilePath[0], 'ab') as f:
+                        np.savetxt(f, [self.t * 0.5, current])
+
+            if (self.t + 1) % (QMCycle * 2) == 0:
+                if len(self.error) < 2:
+                    self.error.append(max(self.XLine.TimeAndX[(self.t + 1 - QMCycle * 2):self.t + 1,1]) -
+                                  min(self.XLine.TimeAndX[(self.t + 1 - QMCycle * 2):self.t + 1,1]))
+                else:
+                    del self.error[0]
+                    self.error.append(max(self.XLine.TimeAndX[(self.t + 1 - QMCycle * 2):self.t + 1, 1]) -
+                                  min(self.XLine.TimeAndX[(self.t + 1 - QMCycle * 2):self.t + 1, 1]))
+
+                self.ui.errorDisplay.setText(str(self.error))
+                self.AmplitudeSender.emit(self.error)
+
+
+            self.XLine.update_figure()
 
             self.t += 1
 
@@ -130,6 +159,7 @@ class BeamMonitor(QWidget):
         获取用户设置的通道名
         :return:
         '''
+        global QMChannelName, DMChannelName
         lineEdit = self.sender()
         if lineEdit.objectName() == "BPMChannel":
             self.BPMChannelName =  self.ui.BPMChannel.text()
@@ -138,7 +168,7 @@ class BeamMonitor(QWidget):
             QMChannelName = self.ui.QMChannel.text()
             self.QMChannelRight = False
         elif lineEdit.objectName() == "DMChannel":
-            self.DMChannelName = self.ui.DMChannel.text()
+            DMChannelName = self.ui.DMChannel.text()
             self.DMChannelRight = False
 
     def QMCurrent_set(self):
@@ -159,24 +189,43 @@ class BeamMonitor(QWidget):
                     self.ui.QMPutBtn.setText("Put")
                     self.sinCurrentRun = not self.sinCurrentRun
                     # 线程停止并销毁
-                    self.QMCurrent.terminate()
-                    del self.QMCurrent
+                    self.QMCurrent.stop()
+                    self.ui.QM_I.setReadOnly(False)
                 else:
                     self.ui.QMPutBtn.setText("Stop")
                     self.sinCurrentRun = not self.sinCurrentRun
                     #创建线程并开启
-                    self.QMCurrent = SinCurrent.CurrentThread(QMChannelName, QMCycle, QMInterval,QMCurrentAmplitude)
                     self.QMCurrent.start()
+                    self.QMSetParameters.emit(QMChannelName, QMCycle, QMInterval, QMCurrentAmplitude)
+                    self.ui.QM_I.setReadOnly(True)
 
     def DMCurrent_set(self):
+        global DMInterval,DMChannelName, DMCurrentAmplitude
         if not self.DMChannelRight:
-            if not caget(self.DMChannelName, timeout=2):  # 尝试是否可以连接到通道并读取数据
+            if not caget(DMChannelName, timeout=2):  # 尝试是否可以连接到通道并读取数据
                 QMessageBox.information(self, "提示", "无法连接到通道，请检查是否有误!")
             else:
                 self.DMChannelRight = True
 
         if self.DMChannelRight:
-            caput(self.DMChannelName, self.DMCurrent)
+            if DMInterval == 0:
+                caput(DMChannelName, DMCurrentAmplitude)
+            else:
+                if self.DMCurrentRun:
+                    self.ui.DMPutBtn.setText("Put")
+                    self.DMCurrentRun = not self.DMCurrentRun
+                    # 线程停止并销毁
+                    self.DMCurrent.stop()
+                    self.ui.DM_I.setReadOnly(False)
+                else:
+                    self.ui.DMPutBtn.setText("Stop")
+                    self.DMCurrentRun = not self.DMCurrentRun
+                    #创建线程并开启
+                    self.DMCurrent = DMCurrent.DMCurrentThread(DMChannelName,DMInterval,DMCurrentAmplitude)
+                    self.DMCurrent.CurrentSignal.connect(self.receiveDMCurrent)
+                    self.QMCurrent.sendData.connect(self.DMCurrent.receiveError)
+                    self.DMCurrent.start()
+                    self.ui.DM_I.setReadOnly(True)
 
     def getFilePath(self):
         self.FilePath = QFileDialog.getSaveFileName(filter ="Text Files (*.txt)")
@@ -187,7 +236,7 @@ class BeamMonitor(QWidget):
             self.ui.StartBtn.setEnabled(True)
 
     def getValue(self):
-        global QMCurrentAmplitude, QMCycle, QMInterval
+        global QMCurrentAmplitude, QMCycle, QMInterval, DMCurrentAmplitude, DMInterval
         SpinBox = self.sender()
         if SpinBox.objectName() == "QM_A":
             QMCurrentAmplitude = SpinBox.value()
@@ -196,10 +245,13 @@ class BeamMonitor(QWidget):
         elif SpinBox.objectName() == "QM_I":
             QMInterval = SpinBox.value()
         elif SpinBox.objectName() == "DM_C":
-            self.DMCurrent = SpinBox.value()
+            DMCurrentAmplitude = SpinBox.value()
+        elif SpinBox.objectName() == "DM_I":
+            DMInterval = SpinBox.value()
 
-        print(QMCurrentAmplitude)
-
+    @pyqtSlot(float)
+    def receiveDMCurrent(self,current):
+        self.ui.DM_C.setValue(current)
 
 class XOnBPM(FigureCanvas):
     def __init__(self):
