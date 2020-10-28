@@ -2,12 +2,7 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="b7de835c-9755-4186-b760-aac54424bbdb" name="Default Changelist" comment="">
-      <change afterPath="$PROJECT_DIR$/DMCurrent.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/SinCurrent.py" beforeDir="false" afterPath="$PROJECT_DIR$/SinCurrent.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/main.py" beforeDir="false" afterPath="$PROJECT_DIR$/main.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/mainwindow.py" beforeDir="false" afterPath="$PROJECT_DIR$/mainwindow.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/mainwindow.ui" beforeDir="false" afterPath="$PROJECT_DIR$/mainwindow.ui" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -83,7 +78,7 @@
       <option name="number" value="Default" />
       <option name="presentableId" value="Default" />
       <updated>1603441901128</updated>
-      <workItem from="1603441902206" duration="27221000" />
+      <workItem from="1603441902206" duration="27879000" />
     </task>
     <task id="LOCAL-00001" summary="读取EPICS的BPM数据">
       <created>1603456695496</created>
@@ -92,7 +87,14 @@
       <option name="project" value="LOCAL" />
       <updated>1603456695496</updated>
     </task>
-    <option name="localTasksCounter" value="2" />
+    <task id="LOCAL-00002" summary="学会了线程间传递数据，完成了自动改变矫正子电流">
+      <created>1603871374486</created>
+      <option name="number" value="00002" />
+      <option name="presentableId" value="LOCAL-00002" />
+      <option name="project" value="LOCAL" />
+      <updated>1603871374486</updated>
+    </task>
+    <option name="localTasksCounter" value="3" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -100,37 +102,38 @@
   </component>
   <component name="VcsManagerConfiguration">
     <MESSAGE value="读取EPICS的BPM数据" />
-    <option name="LAST_COMMIT_MESSAGE" value="读取EPICS的BPM数据" />
+    <MESSAGE value="学会了线程间传递数据，完成了自动改变矫正子电流" />
+    <option name="LAST_COMMIT_MESSAGE" value="学会了线程间传递数据，完成了自动改变矫正子电流" />
   </component>
   <component name="WindowStateProjectService">
-    <state x="558" y="73" key="CommitChangelistDialog2" timestamp="1603456694866">
+    <state x="558" y="73" key="CommitChangelistDialog2" timestamp="1603871373793">
       <screen x="0" y="0" width="1920" height="1040" />
     </state>
-    <state x="558" y="73" key="CommitChangelistDialog2/0.0.1920.1040@0.0.1920.1040" timestamp="1603456694866" />
+    <state x="558" y="73" key="CommitChangelistDialog2/0.0.1920.1040@0.0.1920.1040" timestamp="1603871373793" />
     <state x="740" y="275" key="FileChooserDialogImpl" timestamp="1603853793431">
       <screen x="0" y="0" width="1920" height="1040" />
     </state>
     <state x="740" y="275" key="FileChooserDialogImpl/0.0.1920.1040@0.0.1920.1040" timestamp="1603853793431" />
-    <state width="1877" height="208" key="GridCell.Tab.0.bottom" timestamp="1603871324811">
+    <state width="1877" height="209" key="GridCell.Tab.0.bottom" timestamp="1603872558442">
       <screen x="0" y="0" width="1920" height="1040" />
     </state>
-    <state width="1877" height="208" key="GridCell.Tab.0.bottom/0.0.1920.1040@0.0.1920.1040" timestamp="1603871324811" />
-    <state width="1877" height="208" key="GridCell.Tab.0.center" timestamp="1603871324810">
+    <state width="1877" height="209" key="GridCell.Tab.0.bottom/0.0.1920.1040@0.0.1920.1040" timestamp="1603872558442" />
+    <state width="1877" height="209" key="GridCell.Tab.0.center" timestamp="1603872558442">
       <screen x="0" y="0" width="1920" height="1040" />
     </state>
-    <state width="1877" height="208" key="GridCell.Tab.0.center/0.0.1920.1040@0.0.1920.1040" timestamp="1603871324810" />
-    <state width="1877" height="208" key="GridCell.Tab.0.left" timestamp="1603871324810">
+    <state width="1877" height="209" key="GridCell.Tab.0.center/0.0.1920.1040@0.0.1920.1040" timestamp="1603872558442" />
+    <state width="1877" height="209" key="GridCell.Tab.0.left" timestamp="1603872558442">
       <screen x="0" y="0" width="1920" height="1040" />
     </state>
-    <state width="1877" height="208" key="GridCell.Tab.0.left/0.0.1920.1040@0.0.1920.1040" timestamp="1603871324810" />
-    <state width="1877" height="208" key="GridCell.Tab.0.right" timestamp="1603871324810">
+    <state width="1877" height="209" key="GridCell.Tab.0.left/0.0.1920.1040@0.0.1920.1040" timestamp="1603872558442" />
+    <state width="1877" height="209" key="GridCell.Tab.0.right" timestamp="1603872558442">
       <screen x="0" y="0" width="1920" height="1040" />
     </state>
-    <state width="1877" height="208" key="GridCell.Tab.0.right/0.0.1920.1040@0.0.1920.1040" timestamp="1603871324810" />
-    <state x="552" y="253" key="Vcs.Push.Dialog.v2" timestamp="1603456697297">
+    <state width="1877" height="209" key="GridCell.Tab.0.right/0.0.1920.1040@0.0.1920.1040" timestamp="1603872558442" />
+    <state x="552" y="253" key="Vcs.Push.Dialog.v2" timestamp="1603871378083">
       <screen x="0" y="0" width="1920" height="1040" />
     </state>
-    <state x="552" y="253" key="Vcs.Push.Dialog.v2/0.0.1920.1040@0.0.1920.1040" timestamp="1603456697297" />
+    <state x="552" y="253" key="Vcs.Push.Dialog.v2/0.0.1920.1040@0.0.1920.1040" timestamp="1603871378083" />
     <state x="763" y="433" key="com.intellij.openapi.vcs.update.UpdateOrStatusOptionsDialogupdate-v2" timestamp="1603772426713">
       <screen x="0" y="0" width="1920" height="1040" />
     </state>
