@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>908</width>
-    <height>462</height>
+    <width>985</width>
+    <height>502</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -51,7 +51,7 @@
            <item row="1" column="0">
             <widget class="QLabel" name="label_2">
              <property name="text">
-              <string>Channel:</string>
+              <string>X Channel:</string>
              </property>
             </widget>
            </item>
@@ -59,7 +59,21 @@
             <widget class="QLineEdit" name="BPMName"/>
            </item>
            <item row="1" column="2" colspan="2">
-            <widget class="QLineEdit" name="BPMChannel"/>
+            <widget class="QLineEdit" name="BPMChannel_X"/>
+           </item>
+           <item row="3" column="3">
+            <widget class="QPushButton" name="StopBtn">
+             <property name="text">
+              <string>Stop</string>
+             </property>
+            </widget>
+           </item>
+           <item row="3" column="2">
+            <widget class="QPushButton" name="StartBtn">
+             <property name="text">
+              <string>Start</string>
+             </property>
+            </widget>
            </item>
            <item row="0" column="0">
             <widget class="QLabel" name="label">
@@ -68,17 +82,13 @@
              </property>
             </widget>
            </item>
-           <item row="2" column="3">
-            <widget class="QPushButton" name="StopBtn">
-             <property name="text">
-              <string>Stop</string>
-             </property>
-            </widget>
+           <item row="2" column="2" colspan="2">
+            <widget class="QLineEdit" name="BPMChannel_Y"/>
            </item>
-           <item row="2" column="2">
-            <widget class="QPushButton" name="StartBtn">
+           <item row="2" column="0">
+            <widget class="QLabel" name="label_3">
              <property name="text">
-              <string>Start</string>
+              <string>Y Channel:</string>
              </property>
             </widget>
            </item>

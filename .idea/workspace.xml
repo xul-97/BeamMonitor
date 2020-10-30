@@ -1,30 +1,24 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="ChangeListManager">
-    <list default="true" id="b7de835c-9755-4186-b760-aac54424bbdb" name="Default Changelist" comment="">
+    <list default="true" id="ba685b54-266c-46d8-ae21-158ad5602a66" name="Default Changelist" comment="">
+      <change beforePath="$PROJECT_DIR$/.idea/BeamMonitor.iml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/BeamMonitor.iml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/misc.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/misc.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/main.py" beforeDir="false" afterPath="$PROJECT_DIR$/main.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/mainwindow.py" beforeDir="false" afterPath="$PROJECT_DIR$/mainwindow.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/mainwindow.ui" beforeDir="false" afterPath="$PROJECT_DIR$/mainwindow.ui" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
     <option name="LAST_RESOLUTION" value="IGNORE" />
   </component>
-  <component name="FileTemplateManagerImpl">
-    <option name="RECENT_TEMPLATES">
-      <list>
-        <option value="Python Script" />
-      </list>
-    </option>
-  </component>
   <component name="Git.Settings">
     <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
   </component>
-  <component name="JupyterTrust" id="4203c198-9603-4e51-9ff6-e608272395bc" />
-  <component name="ProjectId" id="1jGsjqXCyYUvvvekdH34dOZtyiH" />
-  <component name="ProjectLevelVcsManager">
-    <ConfirmationsSetting value="2" id="Add" />
-  </component>
+  <component name="JupyterTrust" id="6fda9e09-cbaf-40c6-bcba-24f5bcf07799" />
+  <component name="ProjectId" id="1jOz5pYC0rk6maAmwYbBbTk4OGB" />
   <component name="ProjectViewState">
     <option name="hideEmptyMiddlePackages" value="true" />
     <option name="showLibraryContents" value="true" />
@@ -40,10 +34,10 @@
     <property name="node.js.selected.package.eslint" value="(autodetect)" />
     <property name="node.js.selected.package.tslint" value="(autodetect)" />
     <property name="restartRequiresConfirmation" value="false" />
-    <property name="settings.editor.selected.configurable" value="reference.settings.ide.settings.notifications" />
+    <property name="settings.editor.selected.configurable" value="preferences.general" />
   </component>
   <component name="RunManager">
-    <configuration name="main" type="PythonConfigurationType" factoryName="Python" temporary="true" nameIsGenerated="true">
+    <configuration name="main" type="PythonConfigurationType" factoryName="Python" nameIsGenerated="true">
       <module name="BeamMonitor" />
       <option name="INTERPRETER_OPTIONS" value="" />
       <option name="PARENT_ENVS" value="true" />
@@ -65,83 +59,44 @@
       <option name="INPUT_FILE" value="" />
       <method v="2" />
     </configuration>
-    <recent_temporary>
-      <list>
-        <item itemvalue="Python.main" />
-      </list>
-    </recent_temporary>
   </component>
   <component name="SpellCheckerSettings" RuntimeDictionaries="0" Folders="0" CustomDictionaries="0" DefaultDictionary="application-level" UseSingleDictionary="true" transferred="true" />
   <component name="TaskManager">
     <task active="true" id="Default" summary="Default task">
-      <changelist id="b7de835c-9755-4186-b760-aac54424bbdb" name="Default Changelist" comment="" />
-      <created>1603441901128</created>
+      <changelist id="ba685b54-266c-46d8-ae21-158ad5602a66" name="Default Changelist" comment="" />
+      <created>1603689747839</created>
       <option name="number" value="Default" />
       <option name="presentableId" value="Default" />
-      <updated>1603441901128</updated>
-      <workItem from="1603441902206" duration="27879000" />
-      <workItem from="1603937167279" duration="2619000" />
+      <updated>1603689747839</updated>
+      <workItem from="1603689749786" duration="8133000" />
+      <workItem from="1603761490434" duration="3334000" />
+      <workItem from="1604035884166" duration="210000" />
+      <workItem from="1604058952811" duration="1126000" />
     </task>
-    <task id="LOCAL-00001" summary="读取EPICS的BPM数据">
-      <created>1603456695496</created>
-      <option name="number" value="00001" />
-      <option name="presentableId" value="LOCAL-00001" />
-      <option name="project" value="LOCAL" />
-      <updated>1603456695496</updated>
-    </task>
-    <task id="LOCAL-00002" summary="学会了线程间传递数据，完成了自动改变矫正子电流">
-      <created>1603871374486</created>
-      <option name="number" value="00002" />
-      <option name="presentableId" value="LOCAL-00002" />
-      <option name="project" value="LOCAL" />
-      <updated>1603871374486</updated>
-    </task>
-    <option name="localTasksCounter" value="3" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
     <option name="version" value="3" />
   </component>
-  <component name="VcsManagerConfiguration">
-    <MESSAGE value="读取EPICS的BPM数据" />
-    <MESSAGE value="学会了线程间传递数据，完成了自动改变矫正子电流" />
-    <option name="LAST_COMMIT_MESSAGE" value="学会了线程间传递数据，完成了自动改变矫正子电流" />
-  </component>
   <component name="WindowStateProjectService">
-    <state x="558" y="73" key="CommitChangelistDialog2" timestamp="1603871373793">
-      <screen x="0" y="0" width="1920" height="1040" />
+    <state width="1493" height="147" key="GridCell.Tab.0.bottom" timestamp="1604059840936">
+      <screen x="0" y="0" width="1536" height="824" />
     </state>
-    <state x="558" y="73" key="CommitChangelistDialog2/0.0.1920.1040@0.0.1920.1040" timestamp="1603871373793" />
-    <state x="740" y="275" key="FileChooserDialogImpl" timestamp="1603853793431">
-      <screen x="0" y="0" width="1920" height="1040" />
+    <state width="1493" height="147" key="GridCell.Tab.0.bottom/0.0.1536.824@0.0.1536.824" timestamp="1604059840936" />
+    <state width="1493" height="147" key="GridCell.Tab.0.center" timestamp="1604059840936">
+      <screen x="0" y="0" width="1536" height="824" />
     </state>
-    <state x="740" y="275" key="FileChooserDialogImpl/0.0.1920.1040@0.0.1920.1040" timestamp="1603853793431" />
-    <state width="1877" height="208" key="GridCell.Tab.0.bottom" timestamp="1604043154722">
-      <screen x="0" y="0" width="1920" height="1040" />
+    <state width="1493" height="147" key="GridCell.Tab.0.center/0.0.1536.824@0.0.1536.824" timestamp="1604059840936" />
+    <state width="1493" height="147" key="GridCell.Tab.0.left" timestamp="1604059840936">
+      <screen x="0" y="0" width="1536" height="824" />
     </state>
-    <state width="1877" height="208" key="GridCell.Tab.0.bottom/0.0.1920.1040@0.0.1920.1040" timestamp="1604043154722" />
-    <state width="1877" height="208" key="GridCell.Tab.0.center" timestamp="1604043154722">
-      <screen x="0" y="0" width="1920" height="1040" />
+    <state width="1493" height="147" key="GridCell.Tab.0.left/0.0.1536.824@0.0.1536.824" timestamp="1604059840936" />
+    <state width="1493" height="147" key="GridCell.Tab.0.right" timestamp="1604059840936">
+      <screen x="0" y="0" width="1536" height="824" />
     </state>
-    <state width="1877" height="208" key="GridCell.Tab.0.center/0.0.1920.1040@0.0.1920.1040" timestamp="1604043154722" />
-    <state width="1877" height="208" key="GridCell.Tab.0.left" timestamp="1604043154722">
-      <screen x="0" y="0" width="1920" height="1040" />
-    </state>
-    <state width="1877" height="208" key="GridCell.Tab.0.left/0.0.1920.1040@0.0.1920.1040" timestamp="1604043154722" />
-    <state width="1877" height="208" key="GridCell.Tab.0.right" timestamp="1604043154722">
-      <screen x="0" y="0" width="1920" height="1040" />
-    </state>
-    <state width="1877" height="208" key="GridCell.Tab.0.right/0.0.1920.1040@0.0.1920.1040" timestamp="1604043154722" />
-    <state x="552" y="253" key="Vcs.Push.Dialog.v2" timestamp="1603871378083">
-      <screen x="0" y="0" width="1920" height="1040" />
-    </state>
-    <state x="552" y="253" key="Vcs.Push.Dialog.v2/0.0.1920.1040@0.0.1920.1040" timestamp="1603871378083" />
-    <state x="763" y="433" key="com.intellij.openapi.vcs.update.UpdateOrStatusOptionsDialogupdate-v2" timestamp="1603772426713">
-      <screen x="0" y="0" width="1920" height="1040" />
-    </state>
-    <state x="763" y="433" key="com.intellij.openapi.vcs.update.UpdateOrStatusOptionsDialogupdate-v2/0.0.1920.1040@0.0.1920.1040" timestamp="1603772426713" />
+    <state width="1493" height="147" key="GridCell.Tab.0.right/0.0.1536.824@0.0.1536.824" timestamp="1604059840936" />
   </component>
   <component name="com.intellij.coverage.CoverageDataManagerImpl">
-    <SUITE FILE_PATH="coverage/BeamMonitor$main.coverage" NAME="main Coverage Results" MODIFIED="1604043154701" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
+    <SUITE FILE_PATH="coverage/BeamMonitor$main.coverage" NAME="main Coverage Results" MODIFIED="1604059840858" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
   </component>
 </project>

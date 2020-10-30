@@ -36,7 +36,8 @@ class BeamMonitor(QWidget):
     def InitUI(self):
         global QMCurrentAmplitude, QMCycle, QMInterval,QMChannelName,DMCurrentAmplitude,DMInterval,DMChannelName
 
-        self.BPMChannelName = "xuliang"
+        self.BPMChannelName_X = "xuliang"
+        self.BPMChannelName_Y= "xuliang"
         DMChannelName = "xuliang"
         QMChannelName = "xuliang"
         QMCurrentAmplitude = 0
@@ -59,7 +60,8 @@ class BeamMonitor(QWidget):
         self.ui.FilePath.setReadOnly(True)
 
         self.ui.isSaveCheckBox.stateChanged.connect(self.on_isSaveCheckBox_slot)
-        self.ui.BPMChannel.textChanged.connect(self.getChannelName)
+        self.ui.BPMChannel_X.textChanged.connect(self.getChannelName)
+        self.ui.BPMChannel_Y.textChanged.connect(self.getChannelName)
         self.ui.QMChannel.textChanged.connect(self.getChannelName)
         self.ui.DMChannel.textChanged.connect(self.getChannelName)
         self.ui.StartBtn.clicked.connect(self.on_StartBtn_slot)
@@ -83,11 +85,19 @@ class BeamMonitor(QWidget):
     def on_StartBtn_slot(self):
         #每0.5秒读取一次BPM的数据
         self.timer.start(500)
+        self.ui.StartBtn.setEnabled(False)
+        self.ui.isSaveCheckBox.setEnabled(False)
+        self.ui.BPMChannel_X.setReadOnly(True)
+        self.ui.BPMChannel_Y.setReadOnly(True)
 
     def on_StopBtn_slot(self):
         self.timer.stop()
         self.t = 0
         self.XLine.TimeAndX = np.empty((0,2))
+        self.ui.StartBtn.setEnabled(True)
+        self.ui.isSaveCheckBox.setEnabled(True)
+        self.ui.BPMChannel_X.setReadOnly(False)
+        self.ui.BPMChannel_Y.setReadOnly(False)
 
     def on_isSaveCheckBox_slot(self):
         '''
@@ -109,27 +119,34 @@ class BeamMonitor(QWidget):
         '''
         global QMCycle
         if not self.BPMChannelRight:
-            if not caget(self.BPMChannelName, timeout = 1):
+            if (not caget(self.BPMChannelName_X, timeout = 1)) or (not caget(self.BPMChannelName_Y, timeout = 1)):
                 QMessageBox.information(self, "提示", "无法连接到通道，请检查是否有误!")
                 self.timer.stop()
                 self.t = 0
+                self.XLine.TimeAndX = np.empty((0,2))
+                self.ui.StartBtn.setEnabled(True)
+                self.ui.isSaveCheckBox.setEnabled(True)
+                self.ui.BPMChannel_X.setReadOnly(False)
+                self.ui.BPMChannel_Y.setReadOnly(False)
             else:
                 self.BPMChannelRight = True
         if self.BPMChannelRight:
-            current = caget(self.BPMChannelName)
+            current_X = caget(self.BPMChannelName_X)
+            current_Y = caget(self.BPMChannelName_Y)
+            print([self.t * 0.5, current_X, current_Y])
 
             if self.XLine.TimeAndX.shape[0] < 80:
 
-                self.XLine.TimeAndX = np.vstack((self.XLine.TimeAndX,[self.t * 0.5,current]))
+                self.XLine.TimeAndX = np.vstack((self.XLine.TimeAndX,[self.t * 0.5,current_X,current_Y]))
                 if self.ui.isSaveCheckBox.isChecked():
                     with open(self.FilePath[0], 'ab') as f:
-                        np.savetxt(f, np.array([[self.t * 0.5, current]]))
+                        np.savetxt(f, np.array([[self.t * 0.5, current_X, current_Y]]))
             else:
                 self.XLine.TimeAndX = np.delete(self.XLine.TimeAndX, 0, axis = 0)
-                self.XLine.TimeAndX = np.vstack((self.XLine.TimeAndX,[self.t * 0.5,current]))
+                self.XLine.TimeAndX = np.vstack((self.XLine.TimeAndX,[self.t * 0.5,current_X,current_Y]))
                 if self.ui.isSaveCheckBox.isChecked():
                     with open(self.FilePath[0], 'ab') as f:
-                        np.savetxt(f, np.array([[self.t * 0.5, current]]))
+                        np.savetxt(f, np.array([[self.t * 0.5, current_X,current_Y]]))
 
             if (self.t + 1) % (QMCycle * 2) == 0:
                 if len(self.error) < 2:
@@ -143,11 +160,13 @@ class BeamMonitor(QWidget):
                     else:
                         self.error.append(max(self.XLine.TimeAndX[(80 - QMCycle * 2):80, 1]) -
                                       min(self.XLine.TimeAndX[(80 - QMCycle * 2):80, 1]))
+                                      
+                    
 
                 self.ui.errorDisplay.setText(str(self.error))
                 self.AmplitudeSender.emit(self.error)
 
-            print(self.XLine.TimeAndX)
+            
             self.XLine.update_figure()
 
             self.t += 1
@@ -168,8 +187,8 @@ class BeamMonitor(QWidget):
         '''
         global QMChannelName, DMChannelName
         lineEdit = self.sender()
-        if lineEdit.objectName() == "BPMChannel":
-            self.BPMChannelName =  self.ui.BPMChannel.text()
+        if lineEdit.objectName() == "BPMChannel_X":
+            self.BPMChannelName_X =  self.ui.BPMChannel_X.text()
             self.BPMChannelRight = False
         elif lineEdit.objectName() == "QMChannel":
             QMChannelName = self.ui.QMChannel.text()
@@ -177,12 +196,15 @@ class BeamMonitor(QWidget):
         elif lineEdit.objectName() == "DMChannel":
             DMChannelName = self.ui.DMChannel.text()
             self.DMChannelRight = False
+        elif lineEdit.objectName() == "BPMChannel_Y":
+            self.BPMChannelName_Y = self.ui.BPMChannel_Y.text()
+            self.BPMChannelRight = False
 
     def QMCurrent_set(self):
         global QMInterval,QMCycle,QMChannelName,QMCurrentAmplitude
 
         if not self.QMChannelRight:
-            if not caget(QMChannelName,timeout=2): # 尝试是否可以连接到通道并读取数据
+            if not caget(QMChannelName,timeout=0.5): # 尝试是否可以连接到通道并读取数据
                 QMessageBox.information(self,"提示", "无法连接到通道，请检查是否有误!")
             else:
                 self.QMChannelRight = True
@@ -209,7 +231,7 @@ class BeamMonitor(QWidget):
     def DMCurrent_set(self):
         global DMInterval,DMChannelName, DMCurrentAmplitude
         if not self.DMChannelRight:
-            if not caget(DMChannelName, timeout=2):  # 尝试是否可以连接到通道并读取数据
+            if not caget(DMChannelName, timeout=0.5):  # 尝试是否可以连接到通道并读取数据
                 QMessageBox.information(self, "提示", "无法连接到通道，请检查是否有误!")
             else:
                 self.DMChannelRight = True
@@ -273,11 +295,12 @@ class XOnBPM(FigureCanvas):
         FigureCanvas.updateGeometry(self)
 
         xLine, = plt.plot([i for i in range(10)], [1, 2, 0, 4, 6, 8, 2, 6, 8, 9], 'r', marker="o", markersize=4)
+        yLine, = plt.plot([i for i in range(10)], [9,0,3,5,7,2,3,6,8,5], 'b', marker="o", markersize=4)
         self.ax.set_xlim(-1, 10)
         self.ax.tick_params(labelsize=7)
-        plt.legend([xLine], ["X"], loc=2, fontsize=6)
+        plt.legend([xLine,yLine], ["X","Y"], loc=2, fontsize=6)
 
-        self.TimeAndX = np.empty((0,2))
+        self.TimeAndX = np.empty((0,3))
 
     def update_figure(self):
         # self.x = [random.randint(0, 10) for i in range(4)]
@@ -285,12 +308,12 @@ class XOnBPM(FigureCanvas):
 
         self.ax.tick_params(labelsize=7)
         self.ax.yaxis.get_major_formatter().set_powerlimits((0, 1))
-        #将x轴坐标刻度设置为文字
         self.ax.set_ylabel("x/y")
         self.ax.grid()
         xLine, = self.ax.plot(self.TimeAndX[:,0],self.TimeAndX[:,1],'r', marker = "o", markersize = 4)
+        yLine, = self.ax.plot(self.TimeAndX[:, 0], self.TimeAndX[:, 2], 'b', marker="o", markersize=4)
         #添加图例显示
-        self.ax.legend([xLine],["X"], loc = 2, fontsize = 6)
+        self.ax.legend([xLine,yLine],["X","Y"], loc = 2, fontsize = 6)
         self.draw()
 
 
