@@ -46,7 +46,8 @@ class BeamMonitor(QWidget):
         DMCurrentAmplitude = 0
         DMInterval = 0
         self.FilePath = ["",""]
-        self.error = []
+        self.error_X = []
+        self.error_Y = []
         self.sinCurrentRun = False
         self.DMCurrentRun = False
         self.BPMChannelRight = False
@@ -93,7 +94,7 @@ class BeamMonitor(QWidget):
     def on_StopBtn_slot(self):
         self.timer.stop()
         self.t = 0
-        self.XLine.TimeAndX = np.empty((0,2))
+        self.XLine.TimeAndX = np.empty((0,3))
         self.ui.StartBtn.setEnabled(True)
         self.ui.isSaveCheckBox.setEnabled(True)
         self.ui.BPMChannel_X.setReadOnly(False)
@@ -123,7 +124,7 @@ class BeamMonitor(QWidget):
                 QMessageBox.information(self, "提示", "无法连接到通道，请检查是否有误!")
                 self.timer.stop()
                 self.t = 0
-                self.XLine.TimeAndX = np.empty((0,2))
+                self.XLine.TimeAndX = np.empty((0,3))
                 self.ui.StartBtn.setEnabled(True)
                 self.ui.isSaveCheckBox.setEnabled(True)
                 self.ui.BPMChannel_X.setReadOnly(False)
@@ -149,22 +150,31 @@ class BeamMonitor(QWidget):
                         np.savetxt(f, np.array([[self.t * 0.5, current_X,current_Y]]))
 
             if (self.t + 1) % (QMCycle * 2) == 0:
-                if len(self.error) < 2:
-                    self.error.append(max(self.XLine.TimeAndX[(self.t + 1 - QMCycle * 2):self.t + 1,1]) -
-                                  min(self.XLine.TimeAndX[(self.t + 1 - QMCycle * 2):self.t + 1,1]))
+                if len(self.error_X) < 2:
+                    self.error_X.append(max(self.XLine.TimeAndX[(self.t + 1 - QMCycle * 2):self.t + 1,1]) -
+                                        min(self.XLine.TimeAndX[(self.t + 1 - QMCycle * 2):self.t + 1,1]))
+                    self.error_Y.append(max(self.XLine.TimeAndX[(self.t + 1 - QMCycle * 2):self.t + 1, 2]) -
+                                        min(self.XLine.TimeAndX[(self.t + 1 - QMCycle * 2):self.t + 1, 2]))
                 else:
-                    del self.error[0]
+                    del self.error_X[0]
+                    del self.error_Y[0]
                     if self.t < 80:
-                        self.error.append(max(self.XLine.TimeAndX[(self.t + 1 - QMCycle * 2):self.t + 1, 1]) -
-                                      min(self.XLine.TimeAndX[(self.t + 1 - QMCycle * 2):self.t + 1, 1]))
+                        self.error_X.append(max(self.XLine.TimeAndX[(self.t + 1 - QMCycle * 2):self.t + 1, 1]) -
+                                            min(self.XLine.TimeAndX[(self.t + 1 - QMCycle * 2):self.t + 1, 1]))
+                        self.error_Y.append(max(self.XLine.TimeAndX[(self.t + 1 - QMCycle * 2):self.t + 1, 2]) -
+                                            min(self.XLine.TimeAndX[(self.t + 1 - QMCycle * 2):self.t + 1, 2]))
                     else:
-                        self.error.append(max(self.XLine.TimeAndX[(80 - QMCycle * 2):80, 1]) -
-                                      min(self.XLine.TimeAndX[(80 - QMCycle * 2):80, 1]))
+                        self.error_X.append(max(self.XLine.TimeAndX[(80 - QMCycle * 2):80, 1]) -
+                                            min(self.XLine.TimeAndX[(80 - QMCycle * 2):80, 1]))
+                        self.error_Y.append(max(self.XLine.TimeAndX[(80 - QMCycle * 2):80, 2]) -
+                                            min(self.XLine.TimeAndX[(80 - QMCycle * 2):80, 2]))
+
                                       
                     
 
-                self.ui.errorDisplay.setText(str(self.error))
-                self.AmplitudeSender.emit(self.error)
+                self.ui.errorDisplay_X.setText("X " + str(self.error_X))
+                self.ui.errorDisplay_Y.setText("Y " + str(self.error_Y))
+                self.AmplitudeSender.emit(self.error_X)
 
             
             self.XLine.update_figure()

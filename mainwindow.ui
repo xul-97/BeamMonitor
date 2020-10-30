@@ -542,7 +542,14 @@
           </layout>
          </item>
          <item>
-          <widget class="QLabel" name="errorDisplay">
+          <widget class="QLabel" name="errorDisplay_X">
+           <property name="text">
+            <string/>
+           </property>
+          </widget>
+         </item>
+         <item>
+          <widget class="QLabel" name="errorDisplay_Y">
            <property name="text">
             <string/>
            </property>
