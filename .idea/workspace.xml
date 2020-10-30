@@ -4,8 +4,6 @@
     <list default="true" id="ba685b54-266c-46d8-ae21-158ad5602a66" name="Default Changelist" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/main.py" beforeDir="false" afterPath="$PROJECT_DIR$/main.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/mainwindow.py" beforeDir="false" afterPath="$PROJECT_DIR$/mainwindow.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/mainwindow.ui" beforeDir="false" afterPath="$PROJECT_DIR$/mainwindow.ui" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -24,7 +22,7 @@
   <component name="PropertiesComponent">
     <property name="RunOnceActivity.OpenProjectViewOnStart" value="true" />
     <property name="WebServerToolWindowFactoryState" value="false" />
-    <property name="last_opened_file_path" value="$PROJECT_DIR$" />
+    <property name="last_opened_file_path" value="$PROJECT_DIR$/../BeamControl" />
     <property name="node.js.detected.package.eslint" value="true" />
     <property name="node.js.detected.package.tslint" value="true" />
     <property name="node.js.path.for.package.eslint" value="project" />
@@ -69,7 +67,7 @@
       <workItem from="1603689749786" duration="8133000" />
       <workItem from="1603761490434" duration="3334000" />
       <workItem from="1604035884166" duration="210000" />
-      <workItem from="1604058952811" duration="2119000" />
+      <workItem from="1604058952811" duration="5873000" />
     </task>
     <task id="LOCAL-00001" summary="读取两个方向的束流位置">
       <created>1604062502484</created>
@@ -78,7 +76,14 @@
       <option name="project" value="LOCAL" />
       <updated>1604062502484</updated>
     </task>
-    <option name="localTasksCounter" value="2" />
+    <task id="LOCAL-00002" summary="更改bug">
+      <created>1604065242484</created>
+      <option name="number" value="00002" />
+      <option name="presentableId" value="LOCAL-00002" />
+      <option name="project" value="LOCAL" />
+      <updated>1604065242484</updated>
+    </task>
+    <option name="localTasksCounter" value="3" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -86,13 +91,18 @@
   </component>
   <component name="VcsManagerConfiguration">
     <MESSAGE value="读取两个方向的束流位置" />
-    <option name="LAST_COMMIT_MESSAGE" value="读取两个方向的束流位置" />
+    <MESSAGE value="更改bug" />
+    <option name="LAST_COMMIT_MESSAGE" value="更改bug" />
   </component>
   <component name="WindowStateProjectService">
-    <state x="367" y="0" key="CommitChangelistDialog2" timestamp="1604062500453">
+    <state x="367" y="0" key="CommitChangelistDialog2" timestamp="1604065240675">
       <screen x="0" y="0" width="1536" height="824" />
     </state>
-    <state x="367" y="0" key="CommitChangelistDialog2/0.0.1536.824@0.0.1536.824" timestamp="1604062500453" />
+    <state x="367" y="0" key="CommitChangelistDialog2/0.0.1536.824@0.0.1536.824" timestamp="1604065240675" />
+    <state x="549" y="167" key="FileChooserDialogImpl" timestamp="1604067069553">
+      <screen x="0" y="0" width="1536" height="824" />
+    </state>
+    <state x="549" y="167" key="FileChooserDialogImpl/0.0.1536.824@0.0.1536.824" timestamp="1604067069553" />
     <state width="1493" height="147" key="GridCell.Tab.0.bottom" timestamp="1604062827019">
       <screen x="0" y="0" width="1536" height="824" />
     </state>
@@ -109,6 +119,10 @@
       <screen x="0" y="0" width="1536" height="824" />
     </state>
     <state width="1493" height="147" key="GridCell.Tab.0.right/0.0.1536.824@0.0.1536.824" timestamp="1604062827019" />
+    <state x="361" y="145" key="Vcs.Push.Dialog.v2" timestamp="1604067000676">
+      <screen x="0" y="0" width="1536" height="824" />
+    </state>
+    <state x="361" y="145" key="Vcs.Push.Dialog.v2/0.0.1536.824@0.0.1536.824" timestamp="1604067000676" />
   </component>
   <component name="com.intellij.coverage.CoverageDataManagerImpl">
     <SUITE FILE_PATH="coverage/BeamMonitor$main.coverage" NAME="main Coverage Results" MODIFIED="1604062827003" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />

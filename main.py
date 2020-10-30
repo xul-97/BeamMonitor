@@ -120,7 +120,7 @@ class BeamMonitor(QWidget):
         '''
         global QMCycle
         if not self.BPMChannelRight:
-            if (not caget(self.BPMChannelName_X, timeout = 1)) or (not caget(self.BPMChannelName_Y, timeout = 1)):
+            if (None == caget(self.BPMChannelName_X, timeout = 1)) or (None == caget(self.BPMChannelName_Y, timeout = 1)):
                 QMessageBox.information(self, "提示", "无法连接到通道，请检查是否有误!")
                 self.timer.stop()
                 self.t = 0
@@ -187,7 +187,7 @@ class BeamMonitor(QWidget):
         目前作废函数
         :return:
         '''
-        if not caget(channelName,timeout=1): # 尝试是否可以连接到通道并读取数据
+        if None == caget(channelName,timeout=1): # 尝试是否可以连接到通道并读取数据
             QMessageBox.information(self,"提示", "无法连接到通道，请检查是否有误")
 
     def getChannelName(self):
@@ -214,7 +214,7 @@ class BeamMonitor(QWidget):
         global QMInterval,QMCycle,QMChannelName,QMCurrentAmplitude
 
         if not self.QMChannelRight:
-            if not caget(QMChannelName,timeout=0.5): # 尝试是否可以连接到通道并读取数据
+            if None == caget(QMChannelName,timeout=0.5): # 尝试是否可以连接到通道并读取数据
                 QMessageBox.information(self,"提示", "无法连接到通道，请检查是否有误!")
             else:
                 self.QMChannelRight = True
@@ -241,7 +241,7 @@ class BeamMonitor(QWidget):
     def DMCurrent_set(self):
         global DMInterval,DMChannelName, DMCurrentAmplitude
         if not self.DMChannelRight:
-            if not caget(DMChannelName, timeout=0.5):  # 尝试是否可以连接到通道并读取数据
+            if None == caget(DMChannelName, timeout=0.5):  # 尝试是否可以连接到通道并读取数据
                 QMessageBox.information(self, "提示", "无法连接到通道，请检查是否有误!")
             else:
                 self.DMChannelRight = True
